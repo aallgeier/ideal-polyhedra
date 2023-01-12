@@ -1,4 +1,4 @@
-# Senior Indivisualized Project (SIP)
+# Senior Individualized Project (SIP)
 
 ## Ideal octahedron 
 <p float="left">
