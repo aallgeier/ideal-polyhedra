@@ -1,7 +1,7 @@
-# Senior Individualized Project (SIP)
+# Senior Project
 
 ## Abstract 
-The purpose of this project is to provide a method to construct a convex ideal polyhedron in hyperbolic 3-space given a set of internal dihedral an- gles that belong to a unique convex ideal polyhedron up to isometry. Thorough constructions are done for hyperbolic polyhedra that have the same combinatorial structure as a cube or an octahedron.
+The purpose of this project is to provide a method to construct a convex ideal polyhedron in hyperbolic 3-space given a set of internal dihedral angles that belong to a unique convex ideal polyhedron up to isometry. Thorough constructions are done for hyperbolic polyhedra that have the same combinatorial structure as a cube or an octahedron.
 
 ## Generated ideal octahedron 
 <p float="left">
