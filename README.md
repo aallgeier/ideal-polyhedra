@@ -1,5 +1,10 @@
-## Abstract 
-The purpose of this project is to provide a method to construct a convex ideal polyhedron in hyperbolic 3-space given a set of internal dihedral angles that belong to a unique convex ideal polyhedron up to isometry. Thorough constructions are done for hyperbolic polyhedra that have the same combinatorial structure as a cube or an octahedron.
+## Project Name 
+Construction of Convex Ideal Polyhedra in Hyperbolic 3-Space
+
+## Summary 
+Provided a method to construct a convex ideal polyhedron (cube & octahedron) in hyperbolic 3-space given a set of internal dihedral angles. <br> 
+
+Details can be found in SIP_AAllgeier (submitted for library archive).pdf. 
 
 ## Generated ideal octahedron 
 <p float="left">
