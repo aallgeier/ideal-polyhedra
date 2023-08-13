@@ -6,14 +6,15 @@ Provided a method to construct a convex ideal polyhedron (cube & octahedron) in 
 
 Details can be found in SIP_AAllgeier (submitted for library archive).pdf. 
 
-## Generated ideal octahedron 
+## Generated images
+### Ideal octahedron 
 <p float="left">
   <img src="img/octa-sphere.png" width="250" />
   <img src="img/octa-upper.png" width="250" /> 
   <img src="img/octa-verticies.png" width="150" />
 </p>
 
-## Generated ideal cuboid
+### Ideal cuboid
 <p float="left">
   <img src="img/cube-sphere.png" width="230" />
   <img src="img/cube-upper.png" width="300" /> 
