@@ -4,12 +4,13 @@ import numpy as np
 This function returns the adjacency matrix of the vertices of an octahedron.
 """
 def createMatrix():
-    #returns the adjacency matrix of the vertices of an octahedronn
+    # returns the adjacency matrix of the vertices of an octahedronn
     return  [[0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0],[1, 1, 0, 0, 1, 1],
             [1, 1, 0, 0, 1, 1],[0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0]]
-#w is the number of vertices that bounds a single face
-w = int(input("Number of vertices bounding a face? "))
-#v is the number of all the vertices on the polyhedra
+# w is the number of vertices bounding a single face
+print("solving for octahedron...")
+w = 3
+# v is the number of all of the vertices belonging to the polyhedra
 v = len((createMatrix()[0]))
 
 """
@@ -27,18 +28,19 @@ def getEdges(n):
                 edges.append(set([i, j]))
     return edges
 
-print("-Number of edges:")
+print("- Number of edges:")
 print(len(getEdges(v)))
-print("-Edges:")
+print("- Edges:")
 print(getEdges(v))
 
 """
-This function returns the list of vertices that are adjacent to the chosen vertex.
+This function returns the list of vertices that are adjacent to the given vertex.
+
 parameters:
-    n - number of all the vertices on the polyhedra
+    n - total number of vertices on the polyhedra
     vertex - vertex of our choice
 return:
-    list of vertices
+    list of vertices adjacent to the given vertex
 """
 def adjacentVertices(n, vertex):
     adjacency = createMatrix()
@@ -50,30 +52,27 @@ def adjacentVertices(n, vertex):
 
 
 """
-This function returns all the simple cycles that begin and end with a vertex of our choice
-while avoiding specified vertices.
+This function returns all the simple cycles that begin and end with the given vertex
+while avoiding certain vertices.
+
 parameters:
-    n - number of vertices
+    n - total number of vertices
     startingVertex - vertex to start our cycle
-    avoid - list of vertices we want to avoid (an empty list will
-    give all the cycles that start and end at startingVertex)
+    avoid - list of vertices we want to avoid (*an empty list will
+    give all the cycles that start and end at startingVertex*)
 return:
     list of lists of vertices that make up simple cycles
 """
 def fixedVertexCycles(n, startingVertex, avoid):
-    #completecycles records cycles that start and end at startingVertex that don’t contain verticies in avoid.
+    # Completecycles records cycles that start and end at startingVertex that do not contain verticies in avoid.
     completecycles = []
-    #path starts from startingVertex
-    #go to vertices adjacent to startingVertex that’s not in avoid
+    # Paths starting from startingVertex go to vertices adjacent to startingVertex not in avoid
     adjacent = adjacentVertices(n, startingVertex)
-    #We want to make the first step outside of the loop because we need
-    #a list of lists. We don’t want a list of integers.
     afterFirstStep = []
     for i in adjacent:
         if i not in avoid:
             afterFirstStep.append([startingVertex, i])
-    #We want to make the first step outside of the loop in order to avoid
-    #a "cycle" with 3 vertices that go 0 -> adjacent vertex -> 0 (a digon like situation).
+    # Doing this outside of the main loop in order to avoid a "cycle" with 3 vertices i.e. 0 -> adjacent vertex -> 0.
     afterSecondStep = []
     for i in range(len(afterFirstStep)):
         endpt = afterFirstStep[i][len(afterFirstStep[i])-1]
@@ -81,15 +80,16 @@ def fixedVertexCycles(n, startingVertex, avoid):
         for j in adjacent:
             if j != startingVertex and j not in avoid:
                 afterSecondStep.append(afterFirstStep[i]+[j])
-    #Change variable name
+    
+    # Change variable name
     previouspaths = afterSecondStep
-    #We choose n for the range below because we already made 2 steps and
-    #a walk cannot take steps longer than the number of all vertices.
+
+    # Main loop
     for i in range(n):
-        #latestpaths will record the updates of the paths
+        # Latestpaths will record the updates of the paths
         latestpaths = []
         for j in range(len(previouspaths)):
-            #We will check that adjacent vertices of the endpoints of the paths
+            # We will check that adjacent vertices of the endpoints of the paths
             endpoint = previouspaths[j][len(previouspaths[j])-1]
             adjacent = adjacentVertices(n, endpoint)
             for k in adjacent:
@@ -99,25 +99,24 @@ def fixedVertexCycles(n, startingVertex, avoid):
                     elif k == startingVertex:
                         completecycles.append(previouspaths[j]+[k])
         previouspaths = latestpaths.copy()
-    #at this point, completecycles contain paths that are merely the reversed version of another cycle.
-    #We must remove them.
+    
+    # Remove reversed versions of other cycles
     indicies = []
     for i in range(len(completecycles)):
         reversedCycle = completecycles[i][::-1]
         for j in range(i+1,len(completecycles)):
             if completecycles[j] == reversedCycle:
                 indicies.append(i)
-    uniquecycles = list(np.array(completecycles)[indicies])
-    #make sure all elements are lists
+    uniquecycles = np.array(completecycles, dtype=object)[indicies]
     uniquecycles = [list(x) for x in uniquecycles]
     return uniquecycles
 
 """
 This function returns the list of all distinct simple cycles on the 1-skeleton of the given polyhedron.
+
 Parameters:
     n - number of vertices in a graph
-#Explained to Rainie
-#explained to Franco
+
 """
 def allSimpleCycles(n):
     allCycles = []
@@ -126,9 +125,9 @@ def allSimpleCycles(n):
         allCycles = allCycles + fixedVertexCycles(n, startingVertex, avoid)
         avoid.append(startingVertex)
     return allCycles
-print("-Number of simple cycles (total):")
+print("- Total number of simple cycles:")
 print(len(allSimpleCycles(v)))
-print("-List of simple cycles (total):")
+print("- List of all simple cycles:")
 print(allSimpleCycles(v))
 
 """
@@ -143,15 +142,14 @@ def makeVariables(n):
 
 
 """
- !!! Caution !!!
- !!!This only works for the platonic solids!!!
- This function returns all distinct cycles that bound a single face.
+ ** This function works only for the platonic solids **
+
+ This function returns all distinct cycles bounding a single face.
+
  parameters:
     n - number of vertices
-    numVertexForFace - the number of vertices needed to bound a single face
- *Note: For numVertexForFace, actually put the number of vertices around a face.
- The path will contain an additional vertex
- (hence numVertexForFace+1 in the code).
+    numVertexForFace - the number of vertices exactly bounding a single face
+
 """
 def boundingFaces(n, numVertexForFace):
     allCycles = allSimpleCycles(n)
@@ -161,14 +159,11 @@ def boundingFaces(n, numVertexForFace):
             boundingFacelist.append(allCycles[i])
     return boundingFacelist
 
-
-#print("Number of cycles bounding a face:")
-#print(len(boundingFaces(v, w)))
-print("-Number of simple cycles bounding a face:")
+print("- Number of simple cycles exactly bounding a face:")
 print(len(boundingFaces(v, w)))
 
 """
-This function returns the list of simple cycles that don’t bound a single face.
+This function returns the list of simple cycles that do not exactly bound a single face.
 """
 def notBoundingFace(n, numVertexForFace):
     allSimpleCycleslist = allSimpleCycles(n)
@@ -177,14 +172,14 @@ def notBoundingFace(n, numVertexForFace):
         if len(allSimpleCycleslist[i]) > numVertexForFace+1:
             notBoundingFacelist.append(allSimpleCycleslist[i])
     return notBoundingFacelist
-print("-Number of simple cycles not bounding a face:")
+print("- Number of simple cycles not bounding a face:")
 print(len(notBoundingFace(v, w)))
-print("-Number of inequalities (including edge weight restrictions:)")
+print("- Number of inequalities (including edge weight restrictions:)")
 print(len(notBoundingFace(v, w))+len(getEdges(v)))
 
 
 """
-This function prints equations coming from the bounding face condition.
+This function prints equations coming from Rivin's bounding face condition.
 """
 def getEquationsBoundingFace(n, numVertexForFace):
     edges = getEdges(n)
@@ -206,12 +201,11 @@ def getEquationsBoundingFace(n, numVertexForFace):
         print('+ '.join(cycles[i]) + " == 2*np.pi:")
     print("-Left side of equations to matrix:")
     print(matrix)
-print("-Equations and inequalities:")
+print("-- Equations and inequalities --")
 getEquationsBoundingFace(v, w)
 
 """
-This function prints the inequalities for
-simple circuits not bounding a face.
+This function prints the inequalities for simple cycles not bounding a face.
 """
 def getInequalitiesNotBoundingFace(n, numVertexForFace):
     cycles = []
@@ -234,8 +228,7 @@ def getInequalitiesNotBoundingFace(n, numVertexForFace):
 getInequalitiesNotBoundingFace(v, w)
 
 """
-This function prints the inequalities satisfied
-by each edge weight.
+This function prints the inequalities satisfied by each edge weight.
 """
 def getedgeWeightRange(n):
     variables = makeVariables(n)

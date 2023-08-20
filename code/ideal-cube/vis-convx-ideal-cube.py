@@ -7,25 +7,37 @@ from scipy.optimize import fsolve
 from mpl_toolkits.mplot3d import Axes3D
 from sympy import Matrix, S, linsolve, symbols
 import random
+from octahedron_solve_system import get_x
+
+# needed due to possible floating point error
+eps = 0.00000001
+
 """
 These codes are for visualizing a convex ideal CUBE in HYPERBOLIC 3-space in the upper half-space model
 and the ball model given a set
 of external dihedral angles obtained from Rivin’s theorem.
-"""
+
+Example angles:
 externalAngles = [1.9748981268459183, 2.7384076996659408, 2.2979863709366652, 1.4516735513314263, 1.5698794806677308,
- 2.0103008093970063, 2.322152710378157, 2.391153116133702, 2.0931040561822227, 1.9507317874044263, 2.5335253849114983,
-  1.7989281348636652]
+2.0103008093970063, 2.322152710378157, 2.391153116133702, 2.0931040561822227, 1.9507317874044263, 2.5335253849114983,
+1.7989281348636652]
+"""
+
+externalAngles = get_x()
+
 """
 This function returns the internal dihedral angles given the external dihedral angles.
 """
 def get_internal_angles(extAngles):
     intAngles = [np.pi - extAngle for extAngle in extAngles]
     return intAngles
+
 """
-Function representing the left side of equation 6.2
+Function representing the left side of equation 6.2 from project paper.
 """
 def F(f):
     return np.sin(f)*np.sin(y[5]-y[7]+f)*np.sin(y[8]-y[0]+f) - np.sin(y[0]-f)*np.sin(y[7]-f)*np.sin(y[11]-y[5]+y[7]-f)
+
 """
 Get possible solutions to equation F(f) = 0.
 Since the solving function is unstable(nonlinear), we must take this step.
@@ -52,6 +64,7 @@ def check_f_appropriate():
         if 0 < possible_f_sols[i][0] and possible_f_sols[i][0] < np.pi:
             appropriate_f_sols.append(possible_f_sols[i][0])
     return appropriate_f_sols
+
 """
 Give a, b, c, d, e, f corresponding to the f value obtained from solving the equation.
 a, b, c, d, e, f, must be between 0 and pi.
@@ -91,14 +104,16 @@ c = abc[2]
 d = abc[3]
 e = abc[4]
 f = abc[5]
+
 #############################################################################
-#VERTICES ON COMPLEX PLANE IN UPPER HALF_SPACE
+# VERTICES ON COMPLEX PLANE IN UPPER HALF_SPACE
 #############################################################################
 """
 This function rotates a vector v = [v1, v2] with an angle of k (anticlockwise is positive).
 """
 def rotate_vector(v1, v2, k):
     return np.array([math.cos(k)*v1 - math.sin(k)*v2, math.sin(k)*v1 + math.cos(k)*v2])
+
 """
 Set triangle A, B, F.
 """
@@ -179,7 +194,7 @@ def get_D():
     return [g3(s), s, t]
 
 """
-Get h2.
+Get h2
 """
 #line containing O, D. This lines is parametrized.
 def h2(t):
@@ -188,6 +203,7 @@ def h2(t):
     vecOF = [F[0]-O[0], F[1]-O[1]]
     vecOD = rotate_vector(vecOF[0], vecOF[1], -(np.pi-e-f))
     return np.array([O[0] + t*vecOD[0], O[1] + t*vecOD[1]])
+
 def get_t_for_h2_O_to_D():
     D_x = get_D()[0][0]
     t = Symbol("t")
@@ -273,6 +289,7 @@ def circle_function(t, P, Q, R):
     center = get_Circle_center(P, Q, R)
     radius = distance(P, center)
     return radius*np.cos(t)+center[0], radius*np.sin(t)+center[1]
+
 """
 Below is the function that plots the vertices of the cube on the complex plane.
 """
@@ -316,21 +333,21 @@ def vertices_on_complex_plane():
     plt.plot(h1(t_h1)[0], h1(t_h1)[1], "k")
     plt.plot(h2(t_h2)[0], h2(t_h2)[1], "k")
     plt.plot(h3(t_h3)[0], h3(t_h3)[1], "k")
-    circle1 = circle_function(t_circ, A, B, O)
+    circle1 = circle_function(t_circ, O, A, B )
     circle2 = circle_function(t_circ, D, C, B)
-    circle3= circle_function(t_circ,  F, E, O)
+    circle3 = circle_function(t_circ, F, E, O)
     plt.plot(circle1[0], circle1[1], "b")
     plt.plot(circle2[0], circle2[1], "b")
     plt.plot(circle3[0], circle3[1], "b")
-    plt.gca().set_aspect('equal')
+    plt.gca().set_aspect('auto')
     plt.grid(True)
     #plt.legend()
     plt.show()
 
-#vertices_on_complex_plane()
+vertices_on_complex_plane()
 
 #############################################################################
-#UPPER HALF SPACE MODEL
+# UPPER HALF SPACE MODEL
 #############################################################################
 """
 This function will give the parametric function for a spherical triangle.
@@ -348,8 +365,8 @@ parameters:
 def spherical_triangle(T, U, V):
     points_on_TU = 50
     points_on_UP = 50
-    #We are building a mesh here. tt and ss will be the mesh.
-    #interval is the numbers in [0, 1] that t will take.
+    # We are building a mesh here. tt and ss will be the mesh
+    # interval is the numbers in [0, 1] that t will take
     interval = np.linspace(0, 1, points_on_TU)
     tt = []
     ss = []
@@ -382,10 +399,7 @@ def spherical_triangle(T, U, V):
     r = distance(T, circleCenter)
     
     #This is for obtaining the point on the sphere that has the same x, y coordinates as P.
-    #!!!!!ATTENTION!!!!!+0.00001 is not suppose to be there but otherwise we were getting a complex number.
-    #THUS, MAY NOT BE 100% ACCURATE.
-    z = (r**2 - (x - circleCenter[0])**2 - (y - circleCenter[1])**2+0.00000001)**(1/2)
-    #!!!!!!!ATTENTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    z = (r**2 - (x - circleCenter[0])**2 - (y - circleCenter[1])**2+ eps)**(1/2)
     return [x.astype(float), y.astype(float), z.astype(float)]
 
 
@@ -407,17 +421,11 @@ def orthogonal_CutPlane(P, Q, TrueIfUpperHalf):
         midpt = [(P[0] + Q[0]) / 2, (P[1] + Q[1]) / 2]
         r = distance(P, midpt)
         zz = []
-        # z = midpt[2]+math.sqrt(r**2 - (xx-midpt[0])**2 - (yy-midpt[1])**2)
         for i in range(len(xx)):
-            # !!!!!ATTENTION!!!!!+0.00001 is not suppose to be there but otherwise we were getting
-            # a complex number(must be a computer issue about floats).
-            #  This expect that this manipulation number would not affect the plot.
-            zvalue = (r ** 2 - (xx[i][0] - midpt[0]) ** 2 - (yy[i][0] - midpt[1]) ** 2 + 0.00000000001) ** (1 / 2)
-            # !!!!!!!ATTENTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            zvalue = (r ** 2 - (xx[i][0] - midpt[0]) ** 2 - (yy[i][0] - midpt[1]) ** 2 + eps) ** (1 / 2)
             zrange = np.linspace(float(zvalue), 5, points_in_z_direction)
             zz.append(zrange)
         zz = np.array(zz)
-        #print(zz)
         return [xx.astype(float), yy.astype(float), zz.astype(float)]
     else:
         points_on_PQ = 50
@@ -430,12 +438,8 @@ def orthogonal_CutPlane(P, Q, TrueIfUpperHalf):
         midpt = [(P[0] + Q[0]) / 2, (P[1] + Q[1]) / 2]
         r = distance(P, midpt)
         zz = []
-        # z = midpt[2]+math.sqrt(r**2 - (xx-midpt[0])**2 - (yy-midpt[1])**2)
         for i in range(len(xx)):
-            # !!!!!ATTENTION!!!!!+0.00001 is not suppose to be there but otherwise we were getting a complex number.
-            #THUS, MAY NOT BE 100% ACCURATE.
-            zvalue = (r ** 2 - (xx[i][0] - midpt[0]) ** 2 - (yy[i][0] - midpt[1]) ** 2 + 0.000000000001) ** (1 / 2)
-            # !!!!!!!ATTENTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            zvalue = (r ** 2 - (xx[i][0] - midpt[0]) ** 2 - (yy[i][0] - midpt[1]) ** 2 + eps) ** (1 / 2)
             zrange = np.linspace(float(zvalue), 10000, points_in_z_direction)
             zz.append(zrange)
         zz = np.array(zz)
@@ -530,10 +534,10 @@ def plot_upper_half():
     ax.set_zlabel('Z axis')
     plt.show()
 
-#plot_upper_half()
+plot_upper_half()
 
 #############################################################################
-#BALL MODEL
+# BALL MODEL
 #############################################################################
 """
 This function will calcule the distance between points in 3D.
@@ -621,11 +625,11 @@ def ball_model():
     F_3D = [F[0], F[1], 0]
     
     # sphere of inversion
-    # u, v = np.mgrid[0:2 * np.pi:20j, 0:np.pi:10j]
-    # x = np.cos(u) * np.sin(v)
-    # y = np.sin(u) * np.sin(v)
-    # z = np.cos(v) + 1
-    # ax.plot_wireframe(x, y, z, color="k", alpha=0.3)
+    u, v = np.mgrid[0:2 * np.pi:20j, 0:np.pi:10j]
+    x = np.cos(u) * np.sin(v)
+    y = np.sin(u) * np.sin(v)
+    z = np.cos(v) + 1
+    ax.plot_wireframe(x, y, z, color="k", alpha=0.3)
     
     # planes
     planeAB = upper_half_to_ball_surface(orthogonal_CutPlane(A, B, False))
@@ -681,7 +685,7 @@ def ball_model():
     ax.set_xlabel('X axis')
     ax.set_ylabel('Y axis')
     ax.set_zlabel('Z axis')
-    ax.set_aspect('equal')
+    ax.set_aspect('auto')
     plt.show()
 
 ball_model()
