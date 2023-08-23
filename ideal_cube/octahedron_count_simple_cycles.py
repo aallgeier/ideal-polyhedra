@@ -199,8 +199,8 @@ def getEquationsBoundingFace(n, numVertexForFace):
         cycles.append(sorted(cycle))
     for i in range(len(cycles)):
         print('+ '.join(cycles[i]) + " == 2*np.pi:")
-    print("-Left side of equations to matrix:")
-    print(matrix)
+    # print("-Left side of equations to matrix:")
+    # print(matrix)
 print("-- Equations and inequalities --")
 getEquationsBoundingFace(v, w)
 
@@ -222,8 +222,9 @@ def getInequalitiesNotBoundingFace(n, numVertexForFace):
 
         cycles.append(sorted(cycle))
     for i in range(len(cycles)):
-        print("if " + '+ '.join(cycles[i]) + " > 2*np.pi:")
-        print("    count += 1")
+        print('+ '.join(cycles[i]) + " > 2*np.pi")
+        # print("if " + '+ '.join(cycles[i]) + " > 2*np.pi:")
+        # print("    count += 1")
 
 getInequalitiesNotBoundingFace(v, w)
 
@@ -234,10 +235,15 @@ def getedgeWeightRange(n):
     variables = makeVariables(n)
     for i in variables:
         if i != variables[len(variables)-1]:
-            print("if " + "0 < "+str(i)+" and " + str(i) + " < np.pi:")
-            print("    count += 1")
+            print("0 < "+str(i)+" and " + str(i) + " < np.pi")
+            # print("if " + "0 < "+str(i)+" and " + str(i) + " < np.pi:")
+            # print("    count += 1")
         else:
-            print("if " + "0 < "+str(i)+" and " + str(i) + " < np.pi:")
-            print("    count += 1")
+            print("0 < "+str(i)+" and " + str(i) + " < np.pi")
+            # print("if " + "0 < "+str(i)+" and " + str(i) + " < np.pi:")
+            # print("    count += 1")
             print("{", ', '.join(makeVariables(v)), "}")
 getedgeWeightRange(v)
+
+def main():
+    pass
