@@ -7,7 +7,10 @@ Provided a method to construct a convex ideal polyhedron (cube & octahedron) in 
 Details can be found in documents/SIP_AAllgeier (submitted for library archive).pdf. 
 
 ## How to run
-In the command line, run python run.py. 
+In the command line, run 
+```console
+python run.py
+```
 
 ## Generated images
 ### Ideal octahedron 
