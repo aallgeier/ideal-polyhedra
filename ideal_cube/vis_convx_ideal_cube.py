@@ -15,6 +15,10 @@ eps = 0.00000001
 """
 These codes are for visualizing a convex ideal CUBE in HYPERBOLIC 3-space in the upper half-space model
 and the ball model given a set of external dihedral angles obtained from Rivin’s theorem.
+
+Interactive visualization:
+[2.10287729 2.28856823 2.40242808 1.16296997 1.8917398  1.77787994
+ 2.83264882 1.5587967  2.83164711 1.67265655 2.71778726 1.8927415 ]
 """
 
 print()
@@ -373,9 +377,15 @@ def vertices_on_complex_plane():
     fig_all.add_shape(type="circle", xref="x", yref="y",x0=np.array(circle3_ctr[0]-circle3_rad, dtype=np.float32), y0=np.array(circle3_ctr[1]-circle3_rad, dtype=np.float), x1=np.array(circle3_ctr[0]+circle3_rad, dtype=np.float), y1=np.array(circle3_ctr[1]+circle3_rad, dtype=np.float),line_color='blue')
     
     fig_all.update_traces(marker={'size': 15})
+    fig_all.update_layout(title_text="Vertices on plane")
+    
+    fig_all.update_yaxes(
+        scaleanchor="x",
+        scaleratio=1,
+    )
     fig_all.show()
 
-    #pyo.plot(fig_all, filename='plot1.html', auto_open=False)
+    pyo.plot(fig_all, filename='plot1.html', auto_open=False)
 
 
     
@@ -678,9 +688,10 @@ def plot_upper_half():
         opacity=0.4  # Make the plane translucent. Adjust this value (between 0 and 1) to achieve the desired translucency.
     ))
 
+    fig.update_layout(title_text="Upper half-space model")
     fig.show()
 
-    #pyo.plot(fig, filename='plot2.html', auto_open=False)
+    pyo.plot(fig, filename='plot2.html', auto_open=False)
     
 #############################################################################
 # BALL MODEL
@@ -957,8 +968,9 @@ def ball_model():
         cmax=1
     ))
     
+    fig.update_layout(title_text="Ball model")
     fig.show()
-    #pyo.plot(fig, filename='plot3.html', auto_open=False)
+    pyo.plot(fig, filename='plot3.html', auto_open=False)
 
 
 vertices_on_complex_plane()
